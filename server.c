@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yobourai <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: yobourai <yobourai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 21:30:05 by yobourai          #+#    #+#             */
-/*   Updated: 2024/09/04 21:30:09 by yobourai         ###   ########.fr       */
+/*   Updated: 2024/09/04 22:44:40 by yobourai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,8 +115,8 @@ int	ascii(char *str)
 char	g_str[9];
 void	ft_handler(int sig, siginfo_t *info, void *context)
 {
-	static int	i = 0;
-	static int	k = 0;
+	static int	i;
+	static int	k;
 	int			n;
 	int			j;
 
@@ -124,6 +124,8 @@ void	ft_handler(int sig, siginfo_t *info, void *context)
 	j = info->si_pid;
 	if (k == 0 || j != k)
 	{
+		if (k)
+			kill(k , SIGUSR1);
 		k = j;
 		i = 0;
 	}

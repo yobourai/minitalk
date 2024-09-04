@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yobourai <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: yobourai <yobourai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 21:29:35 by yobourai          #+#    #+#             */
-/*   Updated: 2024/09/04 21:46:01 by yobourai         ###   ########.fr       */
+/*   Updated: 2024/09/04 22:52:25 by yobourai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
+
+static int len;
 
 int	ft_strlen(char *str)
 {
@@ -80,7 +82,6 @@ void	ft_putnbr(int n)
 		ft_putnbr(n / 10);
 	ft_putchar((n % 10) + '0');
 }
-#include <stdio.h>
 
 char	*ft_bin(int a)
 {
@@ -103,7 +104,6 @@ char	*ft_bin(int a)
 		bin[i] = '0';
 		i++;
 	}
-	printf("str = %c | %s \n", flag, bin);
 	return (bin);
 }
 
@@ -122,11 +122,16 @@ void	ft_send_signal(char *pid, char *s)
 		i++;
 	}
 }
-
+void ft_hand(int sig)
+{
+	if (sig == SIGUSR1)
+		exit(1);
+}
 int	main(int argc, char *argv[])
 {
 	int		i;
 
+	signal(SIGUSR1, ft_hand);
 	if (argc != 3)
 		exit(1);
 	i = 0;
@@ -135,5 +140,6 @@ int	main(int argc, char *argv[])
 		ft_send_signal(argv[1], ft_bin(argv[2][i]));
 		i++;
 	}
+	ft_putstr("message has been saved successfuly\n");
 	return (0);
 }
