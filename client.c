@@ -82,6 +82,11 @@ char *ft_bin(int a)
         i--;
     }
     bin[8] = '\0';
+	while(i <= 7)
+	{
+		bin[i] = '0';
+		i++;
+	}
     return bin;
 }
 
