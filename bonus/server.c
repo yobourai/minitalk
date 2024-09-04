@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yobourai <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/04 21:29:35 by yobourai          #+#    #+#             */
-/*   Updated: 2024/09/04 21:46:01 by yobourai         ###   ########.fr       */
+/*   Created: 2024/09/04 21:30:05 by yobourai          #+#    #+#             */
+/*   Updated: 2024/09/04 21:54:00 by yobourai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,60 +80,82 @@ void	ft_putnbr(int n)
 		ft_putnbr(n / 10);
 	ft_putchar((n % 10) + '0');
 }
-#include <stdio.h>
-
-char	*ft_bin(int a)
+int	ft_power(unsigned int k, unsigned int n)
 {
-	static char	bin[9];
-	int			i;
-	char		flag;
-
-	flag = (char)a;
-	i = 7;
-	while (i >= 0)
+	if (n == 0)
+		return (1);
+	if (k == 0)
+		return (0);
+	int result = 1; // 5 3
+					// 3
+	while (n > 0) // 1
 	{
-		bin[i] = (a % 2) + '0';
-		a = a / 2;
-		i--;
+		if (n % 2 == 1)  // true
+			result *= k; // result == 5 == > 25
+		k *= k;          // 25
+		n /= 2;          // 1
 	}
-	i++;
-	bin[8] = '\0';
-	while (i > 0)
-	{
-		bin[i] = '0';
-		i++;
-	}
-	printf("str = %c | %s \n", flag, bin);
-	return (bin);
+	return (result);
 }
 
-void	ft_send_signal(char *pid, char *s)
+int	ascii(char *str)
 {
+	int	n;
 	int	i;
 
+	n = 0;
 	i = 0;
-	while (i <= 7)
+	while (i < 8)
 	{
-		if (s[i] == '0')
-			kill(ft_atoi(pid), SIGUSR1);
-		else if (s[i] == '1')
-			kill(ft_atoi(pid), SIGUSR2);
-		usleep(500);
+		n += (str[i] - '0') * ft_power(2, 7 - i);
 		i++;
+	}
+	return (n);
+}
+char	g_str[9];
+void	ft_handler(int sig, siginfo_t *info, void *context)
+{
+	static int	i = 0;
+	static int	k = 0;
+	int			n;
+	int			j;
+
+	(void)context;
+	j = info->si_pid;
+	if (k == 0 || j != k)
+	{
+		k = j;
+		i = 0;
+	}
+	if (sig == SIGUSR1)
+		g_str[i] = '0';
+	else if (sig == SIGUSR2)
+		g_str[i] = '1';
+	i++;
+	if (i == 8)
+	{
+		i = 0;
+		g_str[8] = '\0';
+		n = ascii(g_str);
+		ft_putchar(n);
 	}
 }
 
-int	main(int argc, char *argv[])
+int	main(void)
 {
-	int		i;
+	int					pid;
+	struct sigaction	msg;
 
-	if (argc != 3)
-		exit(1);
-	i = 0;
-	while (argv[2][i] != '\0')
-	{
-		ft_send_signal(argv[1], ft_bin(argv[2][i]));
-		i++;
-	}
+	pid = getpid();
+	ft_putstr("PID:");
+	ft_putnbr(pid);
+	write(1, "\n", 1);
+	msg.sa_sigaction = ft_handler;
+	msg.sa_flags = SA_SIGINFO;
+	sigaction(SIGUSR1, &msg, NULL);
+	sigaction(SIGUSR2, &msg, NULL);
+	while (1)
+		;
+	pause();
 	return (0);
 }

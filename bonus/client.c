@@ -6,7 +6,7 @@
 /*   By: yobourai <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 21:29:35 by yobourai          #+#    #+#             */
-/*   Updated: 2024/09/04 21:46:01 by yobourai         ###   ########.fr       */
+/*   Updated: 2024/09/04 21:59:44 by yobourai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,10 +86,9 @@ char	*ft_bin(int a)
 {
 	static char	bin[9];
 	int			i;
-	char		flag;
 
-	flag = (char)a;
 	i = 7;
+	printf("size = %d\n", a);
 	while (i >= 0)
 	{
 		bin[i] = (a % 2) + '0';
@@ -103,7 +102,6 @@ char	*ft_bin(int a)
 		bin[i] = '0';
 		i++;
 	}
-	printf("str = %c | %s \n", flag, bin);
 	return (bin);
 }
 
@@ -126,13 +124,15 @@ void	ft_send_signal(char *pid, char *s)
 int	main(int argc, char *argv[])
 {
 	int		i;
+	unsigned char	*str;
 
+	str = (unsigned char*)*(argv + 2);
 	if (argc != 3)
 		exit(1);
 	i = 0;
-	while (argv[2][i] != '\0')
+	while (str[i] != '\0')
 	{
-		ft_send_signal(argv[1], ft_bin(argv[2][i]));
+		ft_send_signal(argv[1], ft_bin(str[i]));
 		i++;
 	}
 	return (0);
